@@ -249,6 +249,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Modificar Persona"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bttn_modifyPersonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="bttn_deletePerson">
           <Properties>
@@ -262,6 +265,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Ver Informacion Persona"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bttn_viewPersonInformationActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

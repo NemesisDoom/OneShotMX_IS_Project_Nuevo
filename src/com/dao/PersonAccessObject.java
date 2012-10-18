@@ -4,6 +4,7 @@
  */
 package com.dao;
 
+import com.sql_generator.PersonSQLGenerator;
 import com.person.Person;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -20,10 +21,10 @@ import java.util.logging.Logger;
  */
 public class PersonAccessObject extends DataAccessObject<Person> {
 
-    private static final String ID_COL = "IDPerson";
-    private static final String FIRSTNAME_COL = "PersonFirstName";
-    private static final String LASTNAME_COL = "PersonLastName";
-    private static final String REGISTRY_DATE_COL = "RegistryDate";
+    public static final String ID_COL = "IDPerson";
+    public static final String FIRSTNAME_COL = "PersonFirstName";
+    public static final String LASTNAME_COL = "PersonLastName";
+    public static final String REGISTRY_DATE_COL = "RegistryDate";
 
     private PersonSQLGenerator sqlGenerator;
     
@@ -72,7 +73,7 @@ public class PersonAccessObject extends DataAccessObject<Person> {
         } finally {
             connManager.closeConnection();
         }
-        return ERROR_EXECUTING_UPDATE;
+        return ERROR_EXECUTING_OPERATION;
     }
 
     @Override
@@ -90,7 +91,7 @@ public class PersonAccessObject extends DataAccessObject<Person> {
         }finally{
             connManager.closeConnection();
         }
-        return ERROR_EXECUTING_UPDATE;
+        return ERROR_EXECUTING_OPERATION;
     }
 
     @Override
@@ -108,15 +109,15 @@ public class PersonAccessObject extends DataAccessObject<Person> {
         } finally {
             connManager.closeConnection();
         }
-        return ERROR_EXECUTING_UPDATE;
+        return ERROR_EXECUTING_OPERATION;
     }
 
     @Override
-    public ArrayList<Person> selectDataFromDatabase(String[] tableValues) {
+    public ArrayList<Person> selectDataFromDatabase(String[] tableValues,String condition) {
         ArrayList<Person> personsList = new ArrayList<Person>();
         DatabaseConnectionManager connManager = getConnectionManager();
         try {
-            String selectQuery = sqlGenerator.createSelectStatement(tableValues, null);
+            String selectQuery = sqlGenerator.createSelectStatement(tableValues, condition);
             connManager.openConnection();
             Connection dbConnection = connManager.getConnection();
             Statement selectStatement = dbConnection.createStatement();

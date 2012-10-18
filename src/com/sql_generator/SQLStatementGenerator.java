@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dao;
+package com.sql_generator;
 
 /**
  *
@@ -14,16 +14,16 @@ public abstract class SQLStatementGenerator<T> {
         setDatabaseTable(inDBTable);
     }
     
-    public final void setDatabaseTable(String inDbTable){
+    private void setDatabaseTable(String inDbTable){
         databaseTable = inDbTable;
     }
     
-    public String getDatabaseTable(){
+    protected String getDatabaseTable(){
         return databaseTable;
     }
     
     public String createSelectMaxIDStatement(String inMaxValue){
-        String maxIDQuery = "SELECT MAX('" +inMaxValue + "') FROM " + getDatabaseTable() + ";";
+        String maxIDQuery = "SELECT MAX(" +inMaxValue + ") FROM " + getDatabaseTable() + ";";
         return maxIDQuery;
     }
     

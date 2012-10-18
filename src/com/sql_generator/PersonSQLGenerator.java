@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dao;
+package com.sql_generator;
 
 import com.person.Person;
 
@@ -38,7 +38,7 @@ public class PersonSQLGenerator extends SQLStatementGenerator<Person> {
         for(int i=1;i<tableValues.length;i++){
             sqlQuery += "," + tableValues[i];
         }
-        sqlQuery += "FROM " + getDatabaseTable();
+        sqlQuery += " FROM " + getDatabaseTable() + " ";
         sqlQuery += condition == null ? ";" : "WHERE " + condition + ";";
         return sqlQuery;
     }

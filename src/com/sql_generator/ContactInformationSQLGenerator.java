@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dao;
+package com.sql_generator;
 
 import com.person.ContactInformation;
 
@@ -16,7 +16,7 @@ public class ContactInformationSQLGenerator extends SQLStatementGenerator<Contac
     private final String ADDRESS_COL = "Address";
     private final String HOME_PHONE_NUMBER_COL = "HomePhoneNumber";
     private final String CELLPHONE_NUMBER_COL = "CellphoneNumber";
-    private final String EXTRA_CELLPHONE_NUMBER_COL = "ExtraHomePhoneNumber";
+    private final String EXTRA_CELLPHONE_NUMBER_COL = "ExtraCellPhoneNumber";
     private final String EXTRA_HOME_PHONE_NUMBER_COL = "ExtraHomePhoneNumber";
     private final String EMAIL_ADDRESS_COL = "EMailAddress";
 
@@ -32,7 +32,7 @@ public class ContactInformationSQLGenerator extends SQLStatementGenerator<Contac
             selectQuery += "," + tableValues[i];
         }
         selectQuery += " FROM " + getDatabaseTable();
-        selectQuery += condition == null ? ";" : "WHERE " + condition + ";";
+        selectQuery += condition == null ? ";" : " WHERE " + condition + ";";
         return selectQuery;
     }
 
@@ -59,7 +59,7 @@ public class ContactInformationSQLGenerator extends SQLStatementGenerator<Contac
     @Override
     public String createDeleteStatement(ContactInformation deletingContactInformation) {
         String deleteQuery = "DELETE FROM " + getDatabaseTable();
-        deleteQuery += " WHERE contactID = " + deletingContactInformation.getContactInformationID();
+        deleteQuery += " WHERE ContactID = " + deletingContactInformation.getContactInformationID();
         return deleteQuery;
     }
 
@@ -70,6 +70,7 @@ public class ContactInformationSQLGenerator extends SQLStatementGenerator<Contac
         String cellphoneNumber = insertingContactInformation.getTelephoneNumber(ContactInformation.CELLPHONE_NUMBER);
         String extraCellphoneNumber = insertingContactInformation.getTelephoneNumber(ContactInformation.ADDITIONAL_CELLPHONE_NUMBER);
         String extraPhoneNumber = insertingContactInformation.getTelephoneNumber(ContactInformation.ADDITIONAL_HOME_NUMBER);
+        String emailAddress = insertingContactInformation.getEmailAddress();
         
         String insertQuery = "INSERT INTO " + getDatabaseTable();
         insertQuery += " (" + ID_COL + ","+ ADDRESS_COL + "," + HOME_PHONE_NUMBER_COL + ",";
@@ -77,8 +78,7 @@ public class ContactInformationSQLGenerator extends SQLStatementGenerator<Contac
         insertQuery += EXTRA_CELLPHONE_NUMBER_COL + "," + EMAIL_ADDRESS_COL + ")";
         insertQuery += " VALUES(nextval('Contact_Person_Increment'),'" + address + "','";
         insertQuery += homephoneNumber + "','"+cellphoneNumber + "','" + extraCellphoneNumber+"','";
-        insertQuery += extraPhoneNumber + "'" + ");";
-
+        insertQuery += extraPhoneNumber + "','" + emailAddress + "');";
 
         return  insertQuery;
     }

@@ -10,24 +10,20 @@
  */
 package com.visual;
 
-import com.controller.PersonVisualController;
-import com.dao.DatabaseTables;
-import com.dao.PersonAccessObject;
+import com.controller.PersonManagementController;
 
 /**
  *
  * @author Miguel
  */
-public class PersonManagement extends javax.swing.JFrame {
-    private PersonForm addPersonForm;
-    private PersonVisualController personVisualController;
-    private PersonAccessObject personController;
+public class PersonManagementForm extends javax.swing.JFrame {
+    private PersonManagementController personManagement;
     
     /** Creates new form PersonManagement */
-    public PersonManagement() {
+    public PersonManagementForm() {
         initComponents();
-        personController = new PersonAccessObject(DatabaseTables.PERSON_TABLE);
-        personVisualController = new PersonVisualController(tbl_registeredPersons);
+        personManagement = PersonManagementController.getInstance();
+        personManagement.viewPersonsList(tbl_registeredPersons);
     }
 
     /** This method is called from within the constructor to
@@ -154,6 +150,11 @@ public class PersonManagement extends javax.swing.JFrame {
         });
 
         bttn_modifyPerson.setText("Modificar Persona");
+        bttn_modifyPerson.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttn_modifyPersonActionPerformed(evt);
+            }
+        });
 
         bttn_deletePerson.setText("Eliminar Persona");
         bttn_deletePerson.addActionListener(new java.awt.event.ActionListener() {
@@ -163,6 +164,11 @@ public class PersonManagement extends javax.swing.JFrame {
         });
 
         bttn_viewPersonInformation.setText("Ver Informacion Persona");
+        bttn_viewPersonInformation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttn_viewPersonInformationActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -230,18 +236,26 @@ public class PersonManagement extends javax.swing.JFrame {
 
 private void bttn_addPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_addPersonActionPerformed
 // TODO add your handling code here:
-    if(addPersonForm == null){
-        addPersonForm = new PersonForm(personVisualController);
-    }
-    if(!addPersonForm.isVisible()){
-        addPersonForm.setVisible(true);
-    }
+    PersonForm personForm = new PersonForm();
+    personForm.setModal(true);
+    personForm.setVisible(true);
+    personManagement.viewPersonsList(tbl_registeredPersons);
 }//GEN-LAST:event_bttn_addPersonActionPerformed
 
 private void bttn_deletePersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_deletePersonActionPerformed
 // TODO add your handling code here:
-    personVisualController.deletePerson(this);
+    personManagement.deletePerson(tbl_registeredPersons, this);
 }//GEN-LAST:event_bttn_deletePersonActionPerformed
+
+private void bttn_modifyPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_modifyPersonActionPerformed
+// TODO add your handling code here:
+    personManagement.modifyPerson(tbl_registeredPersons, this);
+}//GEN-LAST:event_bttn_modifyPersonActionPerformed
+
+private void bttn_viewPersonInformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_viewPersonInformationActionPerformed
+// TODO add your handling code here:
+    personManagement.viewPerson(tbl_registeredPersons, this);
+}//GEN-LAST:event_bttn_viewPersonInformationActionPerformed
 
     /**
      * @param args the command line arguments
@@ -260,13 +274,13 @@ private void bttn_deletePersonActionPerformed(java.awt.event.ActionEvent evt) {/
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PersonManagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PersonManagementForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PersonManagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PersonManagementForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PersonManagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PersonManagementForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PersonManagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PersonManagementForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -274,7 +288,7 @@ private void bttn_deletePersonActionPerformed(java.awt.event.ActionEvent evt) {/
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new PersonManagement().setVisible(true);
+                new PersonManagementForm().setVisible(true);
             }
         });
     }

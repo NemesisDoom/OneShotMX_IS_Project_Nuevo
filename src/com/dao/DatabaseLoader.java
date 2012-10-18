@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Miguel
  */
-public class DatabaseAcceser {
+public class DatabaseLoader {
 
     private final static String CONFIG_PATH = "config.ini";
     private final static String DATABASE_TOKEN = "[DATABASE_VALUES]";
@@ -25,11 +25,12 @@ public class DatabaseAcceser {
     private final static String DATABASE_PORT = "port";
     private final static String DATABASE_HOST = "host";
     private final static String DATABASE_NAME = "database";
-    private static DatabaseAcceser INSTANCE;
+    
+    private static DatabaseLoader INSTANCE;
 
-    public static DatabaseAcceser getInstance() {
+    public static DatabaseLoader getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new DatabaseAcceser();
+            INSTANCE = new DatabaseLoader();
         }
         return INSTANCE;
     }
@@ -49,7 +50,7 @@ public class DatabaseAcceser {
         connManager.initializeConnectionManager(username, password, host, database, portNumber);
     }
 
-    public void testConnection(){
+    public void testDatabaseConnection(){
         try{
             Class.forName("org.postgresql.Driver");
             DatabaseConnectionManager connManager = DatabaseConnectionManager.getInstance();

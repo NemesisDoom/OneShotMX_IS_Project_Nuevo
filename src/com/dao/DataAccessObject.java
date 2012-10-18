@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author Miguel
  */
 public abstract class DataAccessObject<T> {
-    public static final int ERROR_EXECUTING_UPDATE = -1;
+    public static final int ERROR_EXECUTING_OPERATION = -1;
     
     private DatabaseConnectionManager connectionManager;
     private String databaseTable;
@@ -22,16 +22,16 @@ public abstract class DataAccessObject<T> {
         connectionManager = DatabaseConnectionManager.getInstance();
     }
     
-    public String getDatabaseTable(){
+    protected String getDatabaseTable(){
         return databaseTable;
     }
     
-    public DatabaseConnectionManager getConnectionManager(){
+    protected DatabaseConnectionManager getConnectionManager(){
         return connectionManager;
     }
     
     public abstract int insertObject(T object);
     public abstract int updateObject(T prevObject,T newObject);
-    public abstract ArrayList<T> selectDataFromDatabase(String[] tableValues);
+    public abstract ArrayList<T> selectDataFromDatabase(String[] tableValues,String condition);
     public abstract int deleteObject(T object);
 }

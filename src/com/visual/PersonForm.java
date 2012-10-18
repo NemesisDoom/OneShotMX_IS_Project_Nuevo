@@ -11,46 +11,34 @@
 package com.visual;
 
 import com.controller.ContactInformationController;
-import com.controller.PersonContactRelationship;
 import com.controller.PersonManagementController;
-import com.controller.PersonVisualController;
 import com.person.ContactInformation;
 import com.person.Person;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
-import javax.swing.JOptionPane;
 
 /**
  *
  * @author Miguel
  */
-public class PersonForm extends javax.swing.JFrame {
+public class PersonForm extends javax.swing.JDialog {
     
     private Date actualDate;
     private PersonManagementController personController;
-    private PersonVisualController personVisualController;
-    private PersonContactRelationship personContactController;
     private ContactInformationController contactInfoController;
     
     /** Creates new form PersonManagement */
     public PersonForm() {
         initComponents();
-        
-        personController = new PersonManagementController();
         contactInfoController = new ContactInformationController();
-        personContactController = new PersonContactRelationship();
-        
+        personController = PersonManagementController.getInstance();        
         actualDate = new Date();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.ENGLISH);
         String format = dateFormat.format(actualDate);
         txt_registrationDate.setText(format);
     }
 
-    public PersonForm(PersonVisualController inPersonVisualController){
-        this();
-        personVisualController = inPersonVisualController;
-    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -266,26 +254,21 @@ private void bttn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 private void bttn_addPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_addPersonActionPerformed
 // TODO add your handling code here:
     ContactInformation contactInfo = null;
-    contactInfo = contactInfoController.createContactInformation(txt_personAddress.getText(),
+    contactInfo = contactInfoController.createContactInformation(
+            txt_personAddress.getText(),
             txt_personEmailAddress.getText(), 
             txt_personTelephoneNumber.getText(), 
             txt_personCellphoneNumber.getText(), 
             txt_personExtraCellphoneNumber.getText(), 
-            txt_personExtraTelephoneNumber.getText());
-    
-    contactInfoController.addContactInformationToDatabase(contactInfo);
-    
+            txt_personExtraTelephoneNumber.getText()
+            );    
     Person newPerson = null;
     newPerson = personController.createPerson(txt_personFirstName.getText(), 
             txt_personLastName.getText(), 
             contactInfo, 
             actualDate);
-        
-    personController.insertPersonToDatabase(newPerson);
-    personContactController.linkPersonWithContactInformation(newPerson, contactInfo);
-    personVisualController.reloadPersonTable();
-    JOptionPane.showMessageDialog(this,"Se creado la persona "+txt_personFirstName.getText(),"¡Éxito!", JOptionPane.INFORMATION_MESSAGE);
-    dispose();
+    newPerson.setContactInformation(contactInfo);
+    personController.registerPerson(newPerson,this);
 }//GEN-LAST:event_bttn_addPersonActionPerformed
 
     /**

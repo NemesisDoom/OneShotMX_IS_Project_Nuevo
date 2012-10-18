@@ -4,8 +4,6 @@
  */
 package com.controller;
 
-import com.dao.ContactInformationAccessObject;
-import com.dao.DatabaseTables;
 import com.person.ContactInformation;
 
 /**
@@ -13,11 +11,8 @@ import com.person.ContactInformation;
  * @author Huallo
  */
 public class ContactInformationController {
-
-    private ContactInformationAccessObject contactInfoDAO;
-
+    
     public ContactInformationController() {
-        contactInfoDAO = new ContactInformationAccessObject(DatabaseTables.CONTACT_INFORMATION_TABLE);
     }
 
     public ContactInformation createContactInformation(String homeAddress, String emailAddress,
@@ -34,9 +29,4 @@ public class ContactInformationController {
         
         return personContactInformation;
     }
-
-    public void addContactInformationToDatabase(ContactInformation inContactInfo){
-        contactInfoDAO.insertObject(inContactInfo);
-    }
-    
 }

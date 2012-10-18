@@ -4,8 +4,8 @@
  */
 package com.main;
 
-import com.dao.DatabaseAcceser;
-import com.visual.PersonManagement;
+import com.dao.DatabaseLoader;
+import com.visual.PersonManagementForm;
 
 /**
  *
@@ -13,9 +13,9 @@ import com.visual.PersonManagement;
  */
 public class ProgramLoader {
     public static void main(String args[]){
-        DatabaseAcceser acceser = DatabaseAcceser.getInstance();
+        DatabaseLoader acceser = DatabaseLoader.getInstance();
         acceser.loadDatabaseConfiguration();
-        acceser.testConnection();
-        new PersonManagement().setVisible(true);
+        acceser.testDatabaseConnection();
+        new PersonManagementForm().setVisible(true);
     }
 }

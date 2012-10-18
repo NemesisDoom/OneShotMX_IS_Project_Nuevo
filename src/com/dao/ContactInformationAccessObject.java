@@ -4,6 +4,7 @@
  */
 package com.dao;
 
+import com.sql_generator.ContactInformationSQLGenerator;
 import com.person.ContactInformation;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -20,12 +21,12 @@ import java.util.logging.Logger;
 public class ContactInformationAccessObject extends DataAccessObject<ContactInformation> {
 
     public final static String ID_COL = "ContactID";
-    private final String ADDRESS_COL = "Address";
-    private final String HOME_PHONE_NUMBER_COL = "HomePhoneNumber";
-    private final String CELLPHONE_NUMBER_COL = "CellphoneNumber";
-    private final String EXTRA_CELLPHONE_NUMBER_COL = "ExtraHomePhoneNumber";
-    private final String EXTRA_HOME_PHONE_NUMBER_COL = "ExtraHomePhoneNumber";
-    private final String EMAIL_ADDRESS_COL = "EMailAddress";
+    public static final String ADDRESS_COL = "Address";
+    public static final String HOME_PHONE_NUMBER_COL = "HomePhoneNumber";
+    public static final String CELLPHONE_NUMBER_COL = "CellphoneNumber";
+    public static final String EXTRA_CELLPHONE_NUMBER_COL = "ExtraHomePhoneNumber";
+    public static final String EXTRA_HOME_PHONE_NUMBER_COL = "ExtraHomePhoneNumber";
+    public static final String EMAIL_ADDRESS_COL = "EMailAddress";
     
     private ContactInformationSQLGenerator contactInfoSQLGenerator;
 
@@ -58,11 +59,12 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
         String insertQuery = contactInfoSQLGenerator.createInsertStatement(object);
         connManager.openConnection();
         Connection dbConection = connManager.getConnection();
-        int result = ERROR_EXECUTING_UPDATE;
+        int result = ERROR_EXECUTING_OPERATION;
         try {
             Statement insertStatement = dbConection.createStatement();
             result = insertStatement.executeUpdate(insertQuery);
         } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             connManager.closeConnection();
         }
@@ -71,7 +73,7 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
 
     @Override
     public int updateObject(ContactInformation prevObject, ContactInformation newObject) {
-        int result = ERROR_EXECUTING_UPDATE;
+        int result = ERROR_EXECUTING_OPERATION;
         DatabaseConnectionManager connManager = getConnectionManager();
         String updateQuery = contactInfoSQLGenerator.createUpdateStatement(prevObject, newObject);
         connManager.openConnection();
@@ -88,7 +90,7 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
 
     @Override
     public int deleteObject(ContactInformation object) {
-        int result = ERROR_EXECUTING_UPDATE;
+        int result = ERROR_EXECUTING_OPERATION;
         DatabaseConnectionManager connManager = getConnectionManager();
         String deleteQuery = contactInfoSQLGenerator.createDeleteStatement(object);
         connManager.openConnection();
@@ -104,10 +106,10 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
     }
 
     @Override
-    public ArrayList<ContactInformation> selectDataFromDatabase(String[] tableValues) {
+    public ArrayList<ContactInformation> selectDataFromDatabase(String[] tableValues,String condition) {
         ArrayList<ContactInformation> contactList = new ArrayList<ContactInformation>();
         DatabaseConnectionManager connManager = getConnectionManager();
-        String selectQuery = contactInfoSQLGenerator.createSelectStatement(tableValues, null);
+        String selectQuery = contactInfoSQLGenerator.createSelectStatement(tableValues, condition);
         connManager.openConnection();
         Connection dbConnection = connManager.getConnection();
         try {
@@ -115,6 +117,7 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
             ResultSet selectResult = selectStatement.executeQuery(selectQuery);
             contactList = createContactInformationList(selectResult);
         } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             connManager.closeConnection();
         }
