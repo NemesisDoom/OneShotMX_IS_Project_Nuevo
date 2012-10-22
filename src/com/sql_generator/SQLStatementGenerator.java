@@ -4,6 +4,8 @@
  */
 package com.sql_generator;
 
+import com.table_projection.DatabaseTableProjectionGenerator;
+
 /**
  *
  * @author Miguel
@@ -27,7 +29,7 @@ public abstract class SQLStatementGenerator<T> {
         return maxIDQuery;
     }
     
-    public abstract String createSelectStatement(String[] tableValues,String condition);
+    public abstract String createSelectStatement(DatabaseTableProjectionGenerator tableProjection,String condition);
     public abstract String createUpdateStatement(T prevObject,T newObject);
     public abstract String createDeleteStatement(T deletingObject);
     public abstract String createInsertStatement(T insertingObject);

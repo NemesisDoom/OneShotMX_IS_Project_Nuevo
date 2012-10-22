@@ -6,11 +6,14 @@ package com.management;
 
 import com.dao.ContactInformationAccessObject;
 import com.dao.DataAccessObject;
-import com.dao.DatabaseTables;
+import database_tables.DatabaseTables;
 import com.dao.PersonAccessObject;
 import com.dao.PersonContactInfoRelationshipAccessObject;
 import com.person.ContactInformation;
 import com.person.Person;
+import com.table_projection.DatabaseTableProjectionGenerator;
+import database_tables.ContactInformationTable;
+import database_tables.PersonHasInfoTable;
 import java.util.ArrayList;
 
 /**
@@ -38,8 +41,10 @@ public class PersonManager implements ResourceManager<Person> {
     }
 
     @Override
-    public void modifyResource(Person inModifyingObject) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void modifyResource(Person inModifyingObject,Person inModifiedObject) {
+        ContactInformation prevContactInfo = inModifyingObject.getContactInformation();
+        ContactInformation newContactInfo = inModifiedObject.getContactInformation();
+        contactInfoDAO.updateObject( prevContactInfo, newContactInfo );
     }
 
     @Override
@@ -56,12 +61,22 @@ public class PersonManager implements ResourceManager<Person> {
     @Override
     public ArrayList<Person> obtainResourceList(String inCondition) {
         ArrayList<Person> personList = null;
-        String[] tableValues = new String[1];
-        tableValues[0] = "*";
-        personList = personDAO.selectDataFromDatabase(tableValues, inCondition);
+        DatabaseTableProjectionGenerator personProjection = createTableProjectionWithAllAttributes();
+        personList = personDAO.selectDataFromDatabase(personProjection, inCondition);
+        linkPersonWithContactInformation(personList);
         return personList;
     }
 
+    private void linkPersonWithContactInformation(ArrayList<Person> list){
+        for(Person actualPerson : list){
+            DatabaseTableProjectionGenerator tableProjection = new DatabaseTableProjectionGenerator();
+            tableProjection.addAttribute(DatabaseTableProjectionGenerator.ALL_ATTRIBUTES);
+            String condition = ContactInformationTable.CONTACT_ID_COL + "=" + actualPerson.getPersonID();
+            ArrayList<ContactInformation> contactInfo = contactInfoDAO.selectDataFromDatabase(tableProjection, condition);
+            actualPerson.setContactInformation(contactInfo.get(0));
+        }
+    }
+    
     private void deletePerson(int personID){
         Person tempPerson = new Person();
         tempPerson.setPersonID(personID);
@@ -84,9 +99,8 @@ public class PersonManager implements ResourceManager<Person> {
         String condition = PersonAccessObject.FIRSTNAME_COL + " = '" + inPerson.getFirstName() +
                 "' AND " + PersonAccessObject.LASTNAME_COL + " = '"
                 + inPerson.getLastName() + "'";
-        String[] tableValues = new String[1];
-        tableValues[0] = "*";
-        ArrayList<Person> personList = personDAO.selectDataFromDatabase(tableValues, condition);
+        DatabaseTableProjectionGenerator personProjection = createTableProjectionWithAllAttributes();
+        ArrayList<Person> personList = personDAO.selectDataFromDatabase(personProjection, condition);
         Person actualPerson = personList.get(0);
         return actualPerson.getPersonID();
     }
@@ -94,9 +108,8 @@ public class PersonManager implements ResourceManager<Person> {
     private int getContactInformationID(Person inPerson){
         int personID = getPersonID(inPerson);
         String condition = PersonAccessObject.ID_COL + " = " + personID;
-        String[] tableValues = new String[1];
-        tableValues[0] = "*";
-        ArrayList<ArrayList<Integer>> contactList = personContactDAO.selectDataFromDatabase(tableValues, condition);
+        DatabaseTableProjectionGenerator contactProjection = createTableProjectionWithAllAttributes();
+        ArrayList<ArrayList<Integer>> contactList = personContactDAO.selectDataFromDatabase(contactProjection, condition);
         ArrayList<Integer> listWithValues = contactList.get(0);
         int contactID = listWithValues.get(1);
         return contactID;
@@ -112,6 +125,12 @@ public class PersonManager implements ResourceManager<Person> {
         return result == DataAccessObject.ERROR_EXECUTING_OPERATION ? result : maxID;
     }
 
+    private DatabaseTableProjectionGenerator createTableProjectionWithAllAttributes(){
+        DatabaseTableProjectionGenerator dbProjection = new DatabaseTableProjectionGenerator();
+        dbProjection.addAttribute(DatabaseTableProjectionGenerator.ALL_ATTRIBUTES);
+        return dbProjection;
+    }
+    
     private int linkPersonWithContactInformation(int inPersonID, int inContactInfoID) {
         ArrayList<Integer> relationshipList = new ArrayList<Integer>();
         relationshipList.add(inPersonID);

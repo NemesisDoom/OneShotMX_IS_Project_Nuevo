@@ -4,6 +4,7 @@
  */
 package com.sql_generator;
 
+import com.table_projection.DatabaseTableProjectionGenerator;
 import java.util.ArrayList;
 
 /**
@@ -19,12 +20,9 @@ public class PersonContactRelationshipSQLGenerator extends SQLStatementGenerator
     }
     
     @Override
-    public String createSelectStatement(String[] tableValues, String condition) {
+    public String createSelectStatement(DatabaseTableProjectionGenerator tableProjection, String condition) {
         String selectQuery = "SELECT ";
-        selectQuery += tableValues[0] + " ";
-        for(int i=1;i<tableValues.length;i++){
-            selectQuery += "," + tableValues[i];
-        }
+        selectQuery += tableProjection.getTableProjection();
         selectQuery += " FROM " + getDatabaseTable() + " ";
         selectQuery += condition == null ? ";" : "WHERE " + condition + ";";
         return selectQuery;

@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public interface ResourceManager<T> {
     public void registerResource(T inRegisteringObject);
-    public void modifyResource(T inModifyingObject);
+    public void modifyResource(T inModifyingObject,T inModifiedObject);
     public void unRegisterResource(T inUnregisteringObject);
     public ArrayList<T> obtainResourceList(String inCondition);
 }

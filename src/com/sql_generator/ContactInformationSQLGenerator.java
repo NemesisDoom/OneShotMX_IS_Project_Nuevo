@@ -5,6 +5,7 @@
 package com.sql_generator;
 
 import com.person.ContactInformation;
+import com.table_projection.DatabaseTableProjectionGenerator;
 
 /**
  *
@@ -25,12 +26,9 @@ public class ContactInformationSQLGenerator extends SQLStatementGenerator<Contac
     }
 
     @Override
-    public String createSelectStatement(String[] tableValues, String condition) {
+    public String createSelectStatement(DatabaseTableProjectionGenerator tableProjection, String condition) {
         String selectQuery = "SELECT ";
-        selectQuery += tableValues[0];
-        for (int i = 1; i < tableValues.length; i++) {
-            selectQuery += "," + tableValues[i];
-        }
+        selectQuery += tableProjection.getTableProjection();
         selectQuery += " FROM " + getDatabaseTable();
         selectQuery += condition == null ? ";" : " WHERE " + condition + ";";
         return selectQuery;
@@ -39,20 +37,24 @@ public class ContactInformationSQLGenerator extends SQLStatementGenerator<Contac
     @Override
     public String createUpdateStatement(ContactInformation prevContactInformation,
             ContactInformation newContactInformation) {
-        String updateQuery = "";
-        updateQuery += "UPDATE FROM " + getDatabaseTable();
-        updateQuery += " SET ";
-        updateQuery += "address ='" + newContactInformation.getHomeAddress() + "',";
-        updateQuery += "homephoneNumber ='" + 
-                newContactInformation.getTelephoneNumber(ContactInformation.HOME_PHONE_NUMBER) + "',";
-        updateQuery += "cellphoneNumber ='" + 
-                newContactInformation.getTelephoneNumber(ContactInformation.CELLPHONE_NUMBER) + "',";
-        updateQuery += "extraCellphoneNumber ='" + 
-                newContactInformation.getTelephoneNumber(ContactInformation.ADDITIONAL_CELLPHONE_NUMBER) +"',";
-        updateQuery += "extraPhoneNumber ='" + 
-                newContactInformation.getTelephoneNumber(ContactInformation.ADDITIONAL_HOME_NUMBER) +"'";
-        updateQuery += " WHERE contactID = " + 
-                prevContactInformation.getContactInformationID();
+        String updateQuery = "UPDATE " + getDatabaseTable() + " ";
+        String address = newContactInformation.getHomeAddress();
+        updateQuery += "SET " + ADDRESS_COL + " = '" + address + "' ,";
+        
+        String emailAddress = newContactInformation.getEmailAddress();
+        updateQuery += EMAIL_ADDRESS_COL + " = '" + emailAddress + "' , ";
+        
+        String telephoneNumber = newContactInformation.getTelephoneNumber(ContactInformation.HOME_PHONE_NUMBER);
+        updateQuery += HOME_PHONE_NUMBER_COL + " = '" + telephoneNumber + "' , ";
+        String extraTelephoneNumber = newContactInformation.getTelephoneNumber(ContactInformation.ADDITIONAL_HOME_NUMBER);
+        updateQuery += EXTRA_HOME_PHONE_NUMBER_COL + " = '" + extraTelephoneNumber + "' , ";
+        
+        String cellphoneNumber = newContactInformation.getTelephoneNumber(ContactInformation.CELLPHONE_NUMBER);
+        updateQuery += CELLPHONE_NUMBER_COL + " = '" + cellphoneNumber + "', ";
+        String extraCellphoneNumber = newContactInformation.getTelephoneNumber(ContactInformation.ADDITIONAL_CELLPHONE_NUMBER);
+        updateQuery += EXTRA_CELLPHONE_NUMBER_COL + " = '" + extraCellphoneNumber + "' ";
+        
+        updateQuery += "WHERE " + ID_COL + " = " + prevContactInformation.getContactInformationID() + ";--";
         return updateQuery;
     }
 

@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Miguel
  */
-public class DatabaseLoader {
+public class DatabaseSettingsLoader {
 
     private final static String CONFIG_PATH = "config.ini";
     private final static String DATABASE_TOKEN = "[DATABASE_VALUES]";
@@ -26,11 +26,11 @@ public class DatabaseLoader {
     private final static String DATABASE_HOST = "host";
     private final static String DATABASE_NAME = "database";
     
-    private static DatabaseLoader INSTANCE;
+    private static DatabaseSettingsLoader INSTANCE;
 
-    public static DatabaseLoader getInstance() {
+    public static DatabaseSettingsLoader getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new DatabaseLoader();
+            INSTANCE = new DatabaseSettingsLoader();
         }
         return INSTANCE;
     }
@@ -58,7 +58,9 @@ public class DatabaseLoader {
             System.out.println("Connection Tested");
             connManager.closeConnection();
         }catch(Exception e){
+            System.out.println("Couldn't Connect to Database, Program Won't Execute.");
             e.printStackTrace();
+            System.exit(-1);
         }
     }
     

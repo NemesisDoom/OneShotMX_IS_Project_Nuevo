@@ -5,6 +5,8 @@
 package com.dao;
 
 import com.sql_generator.PersonContactRelationshipSQLGenerator;
+import com.sql_generator.SQLStatementGenerator;
+import com.table_projection.DatabaseTableProjectionGenerator;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,16 +22,18 @@ public class PersonContactInfoRelationshipAccessObject extends DataAccessObject<
     private static final String ID_PERSON_COL = "IDPerson";
     private static final String CONTACT_ID_COL = "ContactID";
     
-    private PersonContactRelationshipSQLGenerator personContactSQLGenerator;
+    //private PersonContactRelationshipSQLGenerator personContactSQLGenerator;
     
     public PersonContactInfoRelationshipAccessObject(String inDBTable){
         super(inDBTable);
-        personContactSQLGenerator = new PersonContactRelationshipSQLGenerator(inDBTable);
+        SQLStatementGenerator personContactSQLGenerator = 
+                new PersonContactRelationshipSQLGenerator(inDBTable);
+        setSQLGenerator(personContactSQLGenerator);
     }
     
     @Override
     public int insertObject(ArrayList<Integer> object) {
-        String insertQuery = personContactSQLGenerator.createInsertStatement(object);
+        String insertQuery = getSQLGenerator().createInsertStatement(object);
         DatabaseConnectionManager connManager = getConnectionManager();
         connManager.openConnection();
         Connection dbConnection = connManager.getConnection();
@@ -51,9 +55,9 @@ public class PersonContactInfoRelationshipAccessObject extends DataAccessObject<
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> selectDataFromDatabase(String[] tableValues,String condition) {
+    public ArrayList<ArrayList<Integer>> selectDataFromDatabase(DatabaseTableProjectionGenerator tableProjection,String condition) {
         ArrayList<ArrayList<Integer>> list = new ArrayList<ArrayList<Integer>>();
-        String selectQuery = personContactSQLGenerator.createSelectStatement(tableValues, condition);
+        String selectQuery = getSQLGenerator().createSelectStatement(tableProjection, condition);
         DatabaseConnectionManager connManager = getConnectionManager();
         connManager.openConnection();
         Connection dbConnection = connManager.getConnection();
@@ -78,7 +82,7 @@ public class PersonContactInfoRelationshipAccessObject extends DataAccessObject<
 
     @Override
     public int deleteObject(ArrayList<Integer> object) {
-        String deleteQuery = personContactSQLGenerator.createDeleteStatement(object);
+        String deleteQuery = getSQLGenerator().createDeleteStatement(object);
         DatabaseConnectionManager connManager = getConnectionManager();
         connManager.openConnection();
         Connection dbConnection = connManager.getConnection();

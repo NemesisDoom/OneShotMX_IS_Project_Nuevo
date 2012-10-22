@@ -4,7 +4,7 @@
  */
 package com.main;
 
-import com.dao.DatabaseLoader;
+import com.dao.DatabaseSettingsLoader;
 import com.visual.PersonManagementForm;
 
 /**
@@ -13,7 +13,7 @@ import com.visual.PersonManagementForm;
  */
 public class ProgramLoader {
     public static void main(String args[]){
-        DatabaseLoader acceser = DatabaseLoader.getInstance();
+        DatabaseSettingsLoader acceser = DatabaseSettingsLoader.getInstance();
         acceser.loadDatabaseConfiguration();
         acceser.testDatabaseConnection();
         new PersonManagementForm().setVisible(true);

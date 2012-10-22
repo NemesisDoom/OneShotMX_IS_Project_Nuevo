@@ -4,8 +4,10 @@
  */
 package com.dao;
 
+import database_tables.DatabaseTables;
 import com.sql_generator.ContactInformationSQLGenerator;
 import com.person.ContactInformation;
+import com.table_projection.DatabaseTableProjectionGenerator;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,20 +26,21 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
     public static final String ADDRESS_COL = "Address";
     public static final String HOME_PHONE_NUMBER_COL = "HomePhoneNumber";
     public static final String CELLPHONE_NUMBER_COL = "CellphoneNumber";
-    public static final String EXTRA_CELLPHONE_NUMBER_COL = "ExtraHomePhoneNumber";
+    public static final String EXTRA_CELLPHONE_NUMBER_COL = "ExtraCellPhoneNumber";
     public static final String EXTRA_HOME_PHONE_NUMBER_COL = "ExtraHomePhoneNumber";
     public static final String EMAIL_ADDRESS_COL = "EMailAddress";
-    
-    private ContactInformationSQLGenerator contactInfoSQLGenerator;
 
+    //private ContactInformationSQLGenerator contactInfoSQLGenerator;
     public ContactInformationAccessObject(String in_databaseTable) {
         super(in_databaseTable);
-        contactInfoSQLGenerator = new ContactInformationSQLGenerator(DatabaseTables.CONTACT_INFORMATION_TABLE);
+        ContactInformationSQLGenerator contactInfoSQLGenerator =
+                new ContactInformationSQLGenerator(DatabaseTables.CONTACT_INFORMATION_TABLE);
+        setSQLGenerator(contactInfoSQLGenerator);
     }
 
     public int getMaxID() {
         DatabaseConnectionManager connManager = getConnectionManager();
-        String maxQuery = contactInfoSQLGenerator.createSelectMaxIDStatement(ID_COL);
+        String maxQuery = getSQLGenerator().createSelectMaxIDStatement(ID_COL);
         connManager.openConnection();
         Connection dbConnection = connManager.getConnection();
         int maxID = 0;
@@ -56,7 +59,7 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
     @Override
     public int insertObject(ContactInformation object) {
         DatabaseConnectionManager connManager = getConnectionManager();
-        String insertQuery = contactInfoSQLGenerator.createInsertStatement(object);
+        String insertQuery = getSQLGenerator().createInsertStatement(object);
         connManager.openConnection();
         Connection dbConection = connManager.getConnection();
         int result = ERROR_EXECUTING_OPERATION;
@@ -75,13 +78,14 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
     public int updateObject(ContactInformation prevObject, ContactInformation newObject) {
         int result = ERROR_EXECUTING_OPERATION;
         DatabaseConnectionManager connManager = getConnectionManager();
-        String updateQuery = contactInfoSQLGenerator.createUpdateStatement(prevObject, newObject);
+        String updateQuery = getSQLGenerator().createUpdateStatement(prevObject, newObject);
         connManager.openConnection();
         Connection dbConection = connManager.getConnection();
         try {
             Statement insertStatement = dbConection.createStatement();
             result = insertStatement.executeUpdate(updateQuery);
         } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             connManager.closeConnection();
         }
@@ -92,7 +96,7 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
     public int deleteObject(ContactInformation object) {
         int result = ERROR_EXECUTING_OPERATION;
         DatabaseConnectionManager connManager = getConnectionManager();
-        String deleteQuery = contactInfoSQLGenerator.createDeleteStatement(object);
+        String deleteQuery = getSQLGenerator().createDeleteStatement(object);
         connManager.openConnection();
         Connection dbConection = connManager.getConnection();
         try {
@@ -106,10 +110,10 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
     }
 
     @Override
-    public ArrayList<ContactInformation> selectDataFromDatabase(String[] tableValues,String condition) {
+    public ArrayList<ContactInformation> selectDataFromDatabase(DatabaseTableProjectionGenerator tableProjection, String condition) {
         ArrayList<ContactInformation> contactList = new ArrayList<ContactInformation>();
         DatabaseConnectionManager connManager = getConnectionManager();
-        String selectQuery = contactInfoSQLGenerator.createSelectStatement(tableValues, condition);
+        String selectQuery = getSQLGenerator().createSelectStatement(tableProjection, condition);
         connManager.openConnection();
         Connection dbConnection = connManager.getConnection();
         try {
@@ -131,18 +135,25 @@ public class ContactInformationAccessObject extends DataAccessObject<ContactInfo
 
                 ContactInformation contactInfo = new ContactInformation();
 
+                int contactID = inResult.getInt(ID_COL);
+                contactInfo.setContactInformationID(contactID);
+                
                 String address = inResult.getString(ADDRESS_COL);
-                String emailAddress = inResult.getString(EMAIL_ADDRESS_COL);
-                String homeNumber = inResult.getString(HOME_PHONE_NUMBER_COL);
-                String cellphoneNumber = inResult.getString(CELLPHONE_NUMBER_COL);
-                String extraHomeNumber = inResult.getString(EXTRA_HOME_PHONE_NUMBER_COL);
-                String extraCellphoneNumber = inResult.getString(EXTRA_CELLPHONE_NUMBER_COL);
-
                 contactInfo.setHomeAddress(address);
+                
+                String emailAddress = inResult.getString(EMAIL_ADDRESS_COL);
                 contactInfo.setEmailAddress(emailAddress);
+                
+                String extraCellphoneNumber = inResult.getString(EXTRA_CELLPHONE_NUMBER_COL);
                 contactInfo.addTelephoneNumber(ContactInformation.ADDITIONAL_CELLPHONE_NUMBER, extraCellphoneNumber);
+                
+                String extraHomeNumber = inResult.getString(EXTRA_HOME_PHONE_NUMBER_COL);
                 contactInfo.addTelephoneNumber(ContactInformation.ADDITIONAL_HOME_NUMBER, extraHomeNumber);
+                
+                String cellphoneNumber = inResult.getString(CELLPHONE_NUMBER_COL);
                 contactInfo.addTelephoneNumber(ContactInformation.CELLPHONE_NUMBER, cellphoneNumber);
+                
+                String homeNumber = inResult.getString(HOME_PHONE_NUMBER_COL);
                 contactInfo.addTelephoneNumber(ContactInformation.HOME_PHONE_NUMBER, homeNumber);
 
                 contactInfoList.add(contactInfo);

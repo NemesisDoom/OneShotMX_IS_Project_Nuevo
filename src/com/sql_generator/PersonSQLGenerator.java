@@ -5,6 +5,7 @@
 package com.sql_generator;
 
 import com.person.Person;
+import com.table_projection.DatabaseTableProjectionGenerator;
 
 /**
  *
@@ -12,32 +13,19 @@ import com.person.Person;
  */
 public class PersonSQLGenerator extends SQLStatementGenerator<Person> {
     
-    private final String ID_COL;
-    private final String FIRSTNAME_COL;
-    private final String LASTNAME_COL;
-    private final String REGISTRY_DATE_COL;
+    private final String ID_COL = "IDPerson";
+    private final String FIRSTNAME_COL = "PersonFirstname";
+    private final String LASTNAME_COL = "PersonLastname";
+    private final String REGISTRY_DATE_COL = "RegistryDate";
     
-    public PersonSQLGenerator(
-            String inDBTable,
-            String inIDCol,
-            String inFirstNameCol,
-            String inLastNameCol,
-            String inRgstrDateCol
-            ){
+    public PersonSQLGenerator(String inDBTable){
         super(inDBTable);
-        ID_COL = inIDCol;
-        FIRSTNAME_COL = inFirstNameCol;
-        LASTNAME_COL = inLastNameCol;
-        REGISTRY_DATE_COL = inRgstrDateCol;
     }
     
     @Override
-    public String createSelectStatement(String[] tableValues,String condition) {
+    public String createSelectStatement(DatabaseTableProjectionGenerator tableProjection,String condition) {
         String sqlQuery = "SELECT ";
-        sqlQuery += tableValues[0];
-        for(int i=1;i<tableValues.length;i++){
-            sqlQuery += "," + tableValues[i];
-        }
+        sqlQuery += tableProjection.getTableProjection();
         sqlQuery += " FROM " + getDatabaseTable() + " ";
         sqlQuery += condition == null ? ";" : "WHERE " + condition + ";";
         return sqlQuery;

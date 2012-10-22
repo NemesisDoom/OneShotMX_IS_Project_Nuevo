@@ -6,6 +6,7 @@ package com.dao;
 
 import com.sql_generator.PersonSQLGenerator;
 import com.person.Person;
+import com.table_projection.DatabaseTableProjectionGenerator;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,42 +27,36 @@ public class PersonAccessObject extends DataAccessObject<Person> {
     public static final String LASTNAME_COL = "PersonLastName";
     public static final String REGISTRY_DATE_COL = "RegistryDate";
 
-    private PersonSQLGenerator sqlGenerator;
-    
+    //private PersonSQLGenerator sqlGenerator;
     public PersonAccessObject(String in_databaseTable) {
         super(in_databaseTable);
-        sqlGenerator = new PersonSQLGenerator(
-                in_databaseTable,
-                ID_COL,
-                FIRSTNAME_COL,
-                LASTNAME_COL,
-                REGISTRY_DATE_COL);
+        PersonSQLGenerator sqlGenerator = new PersonSQLGenerator( in_databaseTable );
+        setSQLGenerator(sqlGenerator);
     }
 
-    public int getMaxID(){
+    public int getMaxID() {
         DatabaseConnectionManager connManager = getConnectionManager();
-        String maxQuery = sqlGenerator.createSelectMaxIDStatement(ID_COL);
+        String maxQuery = getSQLGenerator().createSelectMaxIDStatement(ID_COL);
         connManager.openConnection();
         Connection dbConnection = connManager.getConnection();
         int maxID = 0;
-        try{
-        Statement maxStatement = dbConnection.createStatement();
-        ResultSet result = maxStatement.executeQuery(maxQuery);
-        result.next();
-        maxID = result.getInt("MAX");
-        }catch(SQLException ex){
-            
-        }finally{
+        try {
+            Statement maxStatement = dbConnection.createStatement();
+            ResultSet result = maxStatement.executeQuery(maxQuery);
+            result.next();
+            maxID = result.getInt("MAX");
+        } catch (SQLException ex) {
+        } finally {
             connManager.closeConnection();
         }
         return maxID;
     }
-    
+
     @Override
     public int insertObject(Person object) {
         DatabaseConnectionManager connManager = null;
         try {
-            String sqlQuery = sqlGenerator.createInsertStatement(object);
+            String sqlQuery = getSQLGenerator().createInsertStatement(object);
             connManager = getConnectionManager();
             connManager.openConnection();
             Connection dbConnection = connManager.getConnection();
@@ -77,28 +72,27 @@ public class PersonAccessObject extends DataAccessObject<Person> {
     }
 
     @Override
-    public int updateObject(Person prevObject,Person newObject) {
+    public int updateObject(Person prevObject, Person newObject) {
         DatabaseConnectionManager connManager = getConnectionManager();
-        String updateQuery = sqlGenerator.createUpdateStatement(prevObject, newObject);
+        String updateQuery = getSQLGenerator().createUpdateStatement(prevObject, newObject);
         connManager.openConnection();
         Connection dbConnection = connManager.getConnection();
-        try{
-        Statement updateStatement = dbConnection.createStatement();
-        int result = updateStatement.executeUpdate(updateQuery);
-        return result;
-        }catch(SQLException ex){
-        
-        }finally{
+        try {
+            Statement updateStatement = dbConnection.createStatement();
+            int result = updateStatement.executeUpdate(updateQuery);
+            return result;
+        } catch (SQLException ex) {
+        } finally {
             connManager.closeConnection();
         }
         return ERROR_EXECUTING_OPERATION;
     }
-
+    
     @Override
     public int deleteObject(Person object) {
         DatabaseConnectionManager connManager = getConnectionManager();
         try {
-            String sqlDeleteQuery = sqlGenerator.createDeleteStatement(object);
+            String sqlDeleteQuery = getSQLGenerator().createDeleteStatement(object);
             connManager.openConnection();
             Connection dbConnection = connManager.getConnection();
             Statement deleteStatement = dbConnection.createStatement();
@@ -113,11 +107,11 @@ public class PersonAccessObject extends DataAccessObject<Person> {
     }
 
     @Override
-    public ArrayList<Person> selectDataFromDatabase(String[] tableValues,String condition) {
+    public ArrayList<Person> selectDataFromDatabase(DatabaseTableProjectionGenerator tableProjection, String condition) {
         ArrayList<Person> personsList = new ArrayList<Person>();
         DatabaseConnectionManager connManager = getConnectionManager();
         try {
-            String selectQuery = sqlGenerator.createSelectStatement(tableValues, condition);
+            String selectQuery = getSQLGenerator().createSelectStatement(tableProjection, condition);
             connManager.openConnection();
             Connection dbConnection = connManager.getConnection();
             Statement selectStatement = dbConnection.createStatement();
@@ -139,7 +133,7 @@ public class PersonAccessObject extends DataAccessObject<Person> {
                 String firstName = inDBResult.getString(FIRSTNAME_COL);
                 String lastName = inDBResult.getString(LASTNAME_COL);
                 Date registryDate = inDBResult.getDate(REGISTRY_DATE_COL);
-                
+
                 Person person = new Person();
                 person.setPersonID(personID);
                 person.setFirstName(firstName);
@@ -152,34 +146,4 @@ public class PersonAccessObject extends DataAccessObject<Person> {
         }
         return personsLists;
     }
-
-    /*
-    private String createSelectQuery(String[] values) {
-        String selectQuery = "SELECT ";
-        selectQuery += values[0];
-        for (int i = 1; i < values.length; i++) {
-            selectQuery += "," + values[i];
-        }
-        selectQuery += " FROM " + getDatabaseTable() + ";";
-        return selectQuery;
-    }
-
-    private String createInsertQuery(Person in_InsertingPerson) {
-        String sqlQuery = "";
-        sqlQuery = "INSERT INTO " + getDatabaseTable();
-        sqlQuery += "( " + ID_COL + "," + FIRSTNAME_COL + ","
-                + LASTNAME_COL + "," + REGISTRY_DATE_COL + ")"
-                + "VALUES(nextval('ID_Person_Increment'), '" + in_InsertingPerson.getFirstName() + "'"
-                + "," + "'" + in_InsertingPerson.getLastName() + "','"
-                + in_InsertingPerson.getRegistrationDate().toGMTString() + "'"
-                + ");";
-        return sqlQuery;
-    }
-
-    private String createDeleteQuery(Person inDeletingPerson) {
-        String deleteSQLQuery = "DELETE FROM " + getDatabaseTable();
-        deleteSQLQuery += "WHERE " + FIRSTNAME_COL + " = '" + inDeletingPerson.getFirstName() + "'";
-        deleteSQLQuery += " && " + LASTNAME_COL + " = '" + inDeletingPerson.getLastName() + "';";
-        return deleteSQLQuery;
-    }*/
 }

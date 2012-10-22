@@ -22,14 +22,14 @@ import java.util.Locale;
  *
  * @author Miguel
  */
-public class PersonForm extends javax.swing.JDialog {
+public class AddPersonForm extends javax.swing.JDialog {
     
     private Date actualDate;
     private PersonManagementController personController;
     private ContactInformationController contactInfoController;
     
     /** Creates new form PersonManagement */
-    public PersonForm() {
+    public AddPersonForm() {
         initComponents();
         contactInfoController = new ContactInformationController();
         personController = PersonManagementController.getInstance();        
@@ -75,7 +75,7 @@ public class PersonForm extends javax.swing.JDialog {
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Administracion de Personas");
+        setTitle("Agregar persona");
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Persona"));
@@ -235,7 +235,7 @@ public class PersonForm extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bttn_addPerson)
@@ -288,13 +288,13 @@ private void bttn_addPersonActionPerformed(java.awt.event.ActionEvent evt) {//GE
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PersonForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddPersonForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PersonForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddPersonForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PersonForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddPersonForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PersonForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddPersonForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -302,7 +302,7 @@ private void bttn_addPersonActionPerformed(java.awt.event.ActionEvent evt) {//GE
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new PersonForm().setVisible(true);
+                new AddPersonForm().setVisible(true);
             }
         });
     }

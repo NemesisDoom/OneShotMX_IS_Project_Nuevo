@@ -11,6 +11,7 @@
 package com.visual;
 
 import com.controller.PersonManagementController;
+import javax.swing.JTextField;
 
 /**
  *
@@ -26,6 +27,13 @@ public class PersonManagementForm extends javax.swing.JFrame {
         personManagement.viewPersonsList(tbl_registeredPersons);
     }
 
+    public JTextField getSearchTextField(){
+        return txt_searchField;
+    }
+    
+    public boolean isFirstNameSearchSelected(){
+        return chkbx_searchFirstName.isSelected();
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -54,7 +62,7 @@ public class PersonManagementForm extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Administracion de Personas");
+        setTitle("Módulo de Admon. de Personas");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Criterios de Busqueda"));
 
@@ -66,6 +74,11 @@ public class PersonManagementForm extends javax.swing.JFrame {
         chkbx_searchFirstName.setText("Por Nombre(s)");
 
         bttn_doSearch.setText("Buscar");
+        bttn_doSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bttn_doSearchActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -236,7 +249,7 @@ public class PersonManagementForm extends javax.swing.JFrame {
 
 private void bttn_addPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_addPersonActionPerformed
 // TODO add your handling code here:
-    PersonForm personForm = new PersonForm();
+    AddPersonForm personForm = new AddPersonForm();
     personForm.setModal(true);
     personForm.setVisible(true);
     personManagement.viewPersonsList(tbl_registeredPersons);
@@ -249,13 +262,18 @@ private void bttn_deletePersonActionPerformed(java.awt.event.ActionEvent evt) {/
 
 private void bttn_modifyPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_modifyPersonActionPerformed
 // TODO add your handling code here:
-    personManagement.modifyPerson(tbl_registeredPersons, this);
+    personManagement.showModifyPersonForm(tbl_registeredPersons, this);
 }//GEN-LAST:event_bttn_modifyPersonActionPerformed
 
 private void bttn_viewPersonInformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_viewPersonInformationActionPerformed
 // TODO add your handling code here:
-    personManagement.viewPerson(tbl_registeredPersons, this);
+    personManagement.showViewPersonForm(tbl_registeredPersons, this);
 }//GEN-LAST:event_bttn_viewPersonInformationActionPerformed
+
+private void bttn_doSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttn_doSearchActionPerformed
+// TODO add your handling code here:
+    personManagement.searchPerson(tbl_registeredPersons, this);
+}//GEN-LAST:event_bttn_doSearchActionPerformed
 
     /**
      * @param args the command line arguments
